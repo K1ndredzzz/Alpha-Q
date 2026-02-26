@@ -1,0 +1,101 @@
+# ============================================================
+# US Stock Earnings Insight Pipeline — Company & Year Config
+# ============================================================
+# 修改此文件后直接运行 python main.py 即可生效，无需改代码。
+#
+# years          : 抓取哪些财年（降序排列，最新在前）
+# foreign_filers : 提交 20-F 而非 10-K 的外国公司
+# companies.*    : 按 Tier 分组，Tier 名称仅作标签
+# ipo_year_floor : IPO 年份下限，早于此年的财年自动跳过
+# ============================================================
+
+years = [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017]
+
+# 提交 20-F 年报的外国上市公司（截止日期延长到次年 6 月 30 日）
+foreign_filers = ["TSM", "ASML", "NVO", "SHOP"]
+
+# IPO 年份下限：早于此财年的数据跳过
+[ipo_year_floor]
+ARM   = 2023
+SNOW  = 2020
+CRWD  = 2019
+PLTR  = 2020
+NET   = 2019
+DDOG  = 2019
+ZS    = 2018
+PANW  = 2013
+UBER  = 2019
+LYFT  = 2019
+ABNB  = 2020
+SPOT  = 2018
+TEAM  = 2015
+MNDY  = 2021
+ZM    = 2019
+DOCU  = 2018
+
+# ── Tier 1: AI & Semiconductors ───────────────────────────
+[companies.Tier1_AI_Semis]
+tickers = [
+  "NVDA", "AMD", "INTC", "QCOM", "ARM",
+  "TSM", "ASML", "AMAT", "LRCX", "KLAC",   # 半导体设备
+  "AVGO", "TXN", "MU",                       # 博通/德州仪器/镁光
+  "MRVL", "MCHP", "ADI", "NXPI",            # 新增：Marvell/Microchip/ADI/恩智浦
+]
+
+# ── Tier 2: Big Tech & Cloud ──────────────────────────────
+[companies.Tier2_BigTech]
+tickers = [
+  "MSFT", "GOOGL", "AMZN", "META", "AAPL", "TSLA",
+  "ORCL", "IBM",                             # 传统科技转型
+  "SHOP", "NET", "DDOG",                     # SaaS/云原生
+  "UBER", "LYFT", "ABNB",                    # 新增：共享经济/平台
+  "SPOT", "NFLX", "DIS",                     # 新增：流媒体/内容
+]
+
+# ── Tier 3: AI Software & Platforms ───────────────────────
+[companies.Tier3_AI_Software]
+tickers = [
+  "PLTR", "CRM", "NOW", "ADBE", "CRWD", "SNOW",
+  "ZS", "PANW", "HUBS",                     # 网络安全/营销SaaS
+  "WDAY", "VEEV",                            # 企业SaaS
+  "TEAM", "MNDY", "ZM", "DOCU",             # 新增：协作工具/文档管理
+]
+
+# ── Tier 4: Consumer & Retail ─────────────────────────────
+[companies.Tier4_Consumer]
+tickers = [
+  "WMT", "COST", "TGT", "HD", "SBUX", "MCD",
+  "NKE", "LOW",                              # 耐克/劳氏
+  "PG", "KO", "PEP", "CL",                  # 新增：宝洁/可口可乐/百事/高露洁
+  "ULTA", "LULU",                            # 新增：美妆/运动服饰
+]
+
+# ── Tier 5: Financials ────────────────────────────────────
+[companies.Tier5_Financials]
+tickers = [
+  "JPM", "BAC", "GS", "V", "MA", "AXP",
+  "BLK", "MS", "C",                          # 贝莱德/摩根士丹利/花旗
+  "PYPL", "SQ",                              # 金融科技
+  "WFC", "USB", "PNC", "SCHW",              # 新增：富国/美国银行/PNC/嘉信理财
+]
+
+# ── Tier 6: Healthcare & Biotech ──────────────────────────
+[companies.Tier6_Healthcare]
+tickers = [
+  "LLY", "NVO", "JNJ", "PFE",
+  "ABBV", "MRK", "BMY",                     # 艾伯维/默克/百时美施贵宝
+  "ISRG", "DHR",                             # 直觉外科/丹纳赫
+  "UNH", "CVS", "CI", "HUM",                # 新增：联合健康/CVS/Cigna/Humana
+  "GILD", "REGN", "VRTX",                   # 新增：吉利德/Regeneron/Vertex
+]
+
+# ── Tier 7: Industrial & Energy ───────────────────────────
+[companies.Tier7_Industrial]
+tickers = [
+  "XOM", "CVX", "GE", "BA", "CAT",
+  "LMT", "RTX",                              # 洛克希德/雷神（国防）
+  "NEE", "DUK",                              # 新能源电力
+  "UPS", "FDX",                              # 物流
+  "DE", "MMM", "HON", "EMR",                # 新增：迪尔/3M/霍尼韦尔/艾默生
+  "SLB", "COP",                              # 新增：斯伦贝谢/康菲石油
+]

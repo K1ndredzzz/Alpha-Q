@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  alpha-q-backend:
+    image: fuzhouxing/alpha-q-backend:latest
+    container_name: alpha-q-backend
+    restart: unless-stopped
+    ports:
+      - "8041:8000"
+    environment:
+      - DATABASE_URL=/data/alpha_q_master.db
+    volumes:
+      - ./data/alpha_q_master.db:/data/alpha_q_master.db:ro
+    networks:
+      - alpha_q_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/tickers"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  alpha-q-frontend:
+    image: fuzhouxing/alpha-q-frontend:latest
+    container_name: alpha-q-frontend
+    restart: unless-stopped
+    ports:
+      - "8040:8501"
+    environment:
+      - BACKEND_URL=http://alpha-q-backend:8000
+    depends_on:
+      - alpha-q-backend
+    networks:
+      - alpha_q_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+networks:
+  alpha_q_net:
+    driver: bridge
