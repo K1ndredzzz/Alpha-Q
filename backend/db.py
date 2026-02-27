@@ -1,6 +1,6 @@
 import os
 from sqlalchemy import create_engine, text
-from sqlalchemy.engine import Engine
+from sqlalchemy.engine import Engine, Connection
 
 _DEFAULT_DB = "/data/alpha_q_master.db"
 

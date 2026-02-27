@@ -9,14 +9,22 @@
 # ipo_year_floor : IPO 年份下限，早于此年的财年自动跳过
 # ============================================================
 
-years = [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017]
+# 扩展至 18 年历史（完整覆盖 2008 金融危机至今的经济周期）
+years = [
+  2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017,
+  2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008
+]
 
-# 提交 20-F 年报的外国上市公司（截止日期延长到次年 6 月 30 日）
-foreign_filers = ["TSM", "ASML", "NVO", "SHOP"]
+# 提交 20-F 或 40-F 年报的外国上市公司（截止日期延长到次年 6 月 30 日）
+foreign_filers = ["TSM", "ASML", "NVO", "SHOP", "BABA", "PDD", "SONY", "CHKP", "NTES", "ARM", "SPOT"]
 
-# IPO 年份下限：早于此财年的数据跳过
+# IPO 年份下限：早于此财年的数据跳过，避免无效的 API 请求
 [ipo_year_floor]
-ARM   = 2023
+SHOP  = 2015
+OKTA  = 2018
+VEEV  = 2014
+WDAY  = 2013
+ARM   = 2024
 SNOW  = 2020
 CRWD  = 2019
 PLTR  = 2020
@@ -28,28 +36,52 @@ UBER  = 2019
 LYFT  = 2019
 ABNB  = 2020
 SPOT  = 2018
-TEAM  = 2015
+TEAM  = 2016
 MNDY  = 2021
 ZM    = 2019
 DOCU  = 2018
+RIVN  = 2021
+LCID  = 2021
+S     = 2022
+CFLT  = 2021
+PDD   = 2018
+BABA  = 2015
+META  = 2012
+TSLA  = 2010
+ABBV  = 2012
+PYPL  = 2015
+ZTS   = 2012
+MP    = 2020
+ENPH  = 2012
+FTNT  = 2009
+HUBS  = 2014
+NOW   = 2012
+NXPI  = 2010
+PAYC  = 2014
+ROKU  = 2017
+SEDG  = 2015
+SQ    = 2015
+TENB  = 2018
+TTD   = 2016
 
 # ── Tier 1: AI & Semiconductors ───────────────────────────
 [companies.Tier1_AI_Semis]
 tickers = [
   "NVDA", "AMD", "INTC", "QCOM", "ARM",
   "TSM", "ASML", "AMAT", "LRCX", "KLAC",   # 半导体设备
-  "AVGO", "TXN", "MU",                       # 博通/德州仪器/镁光
-  "MRVL", "MCHP", "ADI", "NXPI",            # 新增：Marvell/Microchip/ADI/恩智浦
+  "TXN", "MU",                             # 德州仪器/镁光
+  "MRVL", "MCHP", "ADI", "NXPI",            # Marvell/Microchip/ADI/恩智浦
+  "SNPS", "CDNS", "WDC", "STX"              # 新增：EDA双雄/存储双雄
 ]
 
 # ── Tier 2: Big Tech & Cloud ──────────────────────────────
 [companies.Tier2_BigTech]
 tickers = [
   "MSFT", "GOOGL", "AMZN", "META", "AAPL", "TSLA",
-  "ORCL", "IBM",                             # 传统科技转型
+  "ORCL", "IBM", "CSCO", "HPQ",              # 传统科技转型及网络硬件
   "SHOP", "NET", "DDOG",                     # SaaS/云原生
-  "UBER", "LYFT", "ABNB",                    # 新增：共享经济/平台
-  "SPOT", "NFLX", "DIS",                     # 新增：流媒体/内容
+  "UBER", "LYFT", "ABNB",                    # 共享经济/平台
+  "BABA", "PDD"                              # 新增：中概电商巨头
 ]
 
 # ── Tier 3: AI Software & Platforms ───────────────────────
@@ -58,7 +90,8 @@ tickers = [
   "PLTR", "CRM", "NOW", "ADBE", "CRWD", "SNOW",
   "ZS", "PANW", "HUBS",                     # 网络安全/营销SaaS
   "WDAY", "VEEV",                            # 企业SaaS
-  "TEAM", "MNDY", "ZM", "DOCU",             # 新增：协作工具/文档管理
+  "TEAM", "MNDY", "ZM", "DOCU",             # 协作工具/文档管理
+  "INTU", "PAYC"                             # 新增：财税/人力SaaS
 ]
 
 # ── Tier 4: Consumer & Retail ─────────────────────────────
@@ -66,8 +99,9 @@ tickers = [
 tickers = [
   "WMT", "COST", "TGT", "HD", "SBUX", "MCD",
   "NKE", "LOW",                              # 耐克/劳氏
-  "PG", "KO", "PEP", "CL",                  # 新增：宝洁/可口可乐/百事/高露洁
-  "ULTA", "LULU",                            # 新增：美妆/运动服饰
+  "PG", "KO", "PEP", "CL",                  # 宝洁/可口可乐/百事/高露洁
+  "ULTA", "LULU",                            # 美妆/运动服饰
+  "GM", "F", "CMG", "DPZ"                    # 新增：通用/福特/奇波雷/达美乐
 ]
 
 # ── Tier 5: Financials ────────────────────────────────────
@@ -76,7 +110,8 @@ tickers = [
   "JPM", "BAC", "GS", "V", "MA", "AXP",
   "BLK", "MS", "C",                          # 贝莱德/摩根士丹利/花旗
   "PYPL", "SQ",                              # 金融科技
-  "WFC", "USB", "PNC", "SCHW",              # 新增：富国/美国银行/PNC/嘉信理财
+  "WFC", "USB", "PNC", "SCHW",              # 富国/美国银行/PNC/嘉信理财
+  "BRK-B", "SPGI", "CME", "PGR"              # 新增：伯克希尔/标普/芝商所/前进保险
 ]
 
 # ── Tier 6: Healthcare & Biotech ──────────────────────────
@@ -85,17 +120,56 @@ tickers = [
   "LLY", "NVO", "JNJ", "PFE",
   "ABBV", "MRK", "BMY",                     # 艾伯维/默克/百时美施贵宝
   "ISRG", "DHR",                             # 直觉外科/丹纳赫
-  "UNH", "CVS", "CI", "HUM",                # 新增：联合健康/CVS/Cigna/Humana
-  "GILD", "REGN", "VRTX",                   # 新增：吉利德/Regeneron/Vertex
+  "UNH", "CVS", "CI", "HUM",                # 联合健康/CVS/Cigna/Humana
+  "SYK", "MCK", "TMO", "MDT"                 # 新增：史赛克/麦克森/赛默飞/美敦力
 ]
 
 # ── Tier 7: Industrial & Energy ───────────────────────────
 [companies.Tier7_Industrial]
 tickers = [
-  "XOM", "CVX", "GE", "BA", "CAT",
+  "XOM", "CVX", "BA", "CAT",
   "LMT", "RTX",                              # 洛克希德/雷神（国防）
   "NEE", "DUK",                              # 新能源电力
   "UPS", "FDX",                              # 物流
-  "DE", "MMM", "HON", "EMR",                # 新增：迪尔/3M/霍尼韦尔/艾默生
-  "SLB", "COP",                              # 新增：斯伦贝谢/康菲石油
+  "DE", "MMM", "HON", "EMR",                # 迪尔/3M/霍尼韦尔/艾默生
+  "SLB", "COP",                              # 斯伦贝谢/康菲石油
+  "GD", "NOC", "EOG"                         # 新增：通用动力/诺斯洛普/EOG
+]
+
+# ── Tier 8: BioTech (新增) ────────────────────────────────
+[companies.Tier8_BioTech]
+tickers = [
+  "VRTX", "REGN", "BIIB", "AMGN", "GILD",    # 核心生物制药
+  "BSX", "ZTS", "EW", "ALGN", "ILMN"         # 器械/动物保健/基因测序
+]
+
+# ── Tier 9: CleanEnergy & EV (新增) ───────────────────────
+[companies.Tier9_CleanEnergy]
+tickers = [
+  "FSLR", "ENPH", "SEDG",                    # 太阳能/逆变器
+  "ALB", "MP",                               # 锂矿/稀土
+  "RIVN", "LCID", "ON", "WOLF"               # 新能源车/碳化硅
+]
+
+# ── Tier 10: Entertainment & Media (新增) ─────────────────
+[companies.Tier10_Entertainment]
+tickers = [
+  "EA", "TTWO", "NTES",                      # 游戏 (含网易)
+  "NFLX", "DIS", "WBD", "PARA",              # 影视/流媒体
+  "LYV", "ROKU", "SIRI", "TTD"               # 演出/广告科技
+]
+
+# ── Tier 11: CyberSecurity (新增) ─────────────────────────
+[companies.Tier11_CyberSecurity]
+tickers = [
+  "FTNT", "CHKP", "OKTA", "CFLT",
+  "S", "TENB"                        # 纯正网络安全标的
+]
+
+# ── Tier 12: Communications (新增) ────────────────────────
+[companies.Tier12_Communications]
+tickers = [
+  "T", "VZ", "TMUS",                         # 美国三大运营商
+  "CMCSA", "CHTR",                           # 宽带/有线电视
+  "AMT", "CCI"                               # 通信铁塔REITs
 ]
