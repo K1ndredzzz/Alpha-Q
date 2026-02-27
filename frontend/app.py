@@ -7,19 +7,19 @@ from html import escape
 from collections import Counter
 
 # Color palette
-BG_CARD = "#111827"
-ACCENT_CYAN = "#00FFD1"
+BG_CARD = "#18181B"
+ACCENT_CYAN = "#00E6F2"
 ACCENT_BLUE = "#3B82F6"
-SEV_CRITICAL = "#FF4444"
-SEV_HIGH = "#FF8C00"
-SEV_MEDIUM = "#FFD700"
-TREND_UP = "#22C55E"
-TREND_FLAT = "#94A3B8"
+SEV_CRITICAL = "#EF4444"
+SEV_HIGH = "#F59E0B"
+SEV_MEDIUM = "#EAB308"
+TREND_UP = "#10B981"
+TREND_FLAT = "#71717A"
 TREND_DOWN = "#EF4444"
-CHART_PAPER = "#111827"
-CHART_PLOT = "#0A0E1A"
-CHART_GRID = "#1E293B"
-CHART_FONT = "#94A3B8"
+CHART_PAPER = "rgba(0,0,0,0)"
+CHART_PLOT = "rgba(0,0,0,0)"
+CHART_GRID = "#27272A"
+CHART_FONT = "#A1A1AA"
 
 BACKEND = os.environ.get("BACKEND_URL", "http://alpha-q-backend:8000")
 
@@ -34,36 +34,59 @@ st.set_page_config(
 # Global CSS
 st.markdown("""
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+html, body, [class*="css"]  {
+    font-family: 'Inter', sans-serif;
+}
+
+.aq-number {
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: -0.02em;
+}
+
 .aq-card {
-    background: #111827;
-    border: 1px solid #1E293B;
+    background: linear-gradient(180deg, #18181B 0%, #121214 100%);
+    border: 1px solid #27272A;
     border-radius: 8px;
     padding: 16px 20px;
     margin-bottom: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, border-color 0.2s ease;
 }
-.aq-card-critical { border-left: 4px solid #FF4444; }
-.aq-card-high { border-left: 4px solid #FF8C00; }
-.aq-card-medium { border-left: 4px solid #FFD700; }
+.aq-card:hover { transform: translateY(-2px); border-color: #3F3F46; }
+
+.aq-card-critical { border-left: 4px solid #EF4444; background: linear-gradient(180deg, rgba(239,68,68,0.05) 0%, #121214 100%); }
+.aq-card-high { border-left: 4px solid #F59E0B; background: linear-gradient(180deg, rgba(245,158,11,0.05) 0%, #121214 100%); }
+.aq-card-medium { border-left: 4px solid #EAB308; background: linear-gradient(180deg, rgba(234,179,8,0.05) 0%, #121214 100%); }
+
 .aq-badge {
     display: inline-block;
-    background: #1E293B;
-    color: #94A3B8;
+    background: #27272A;
+    color: #D4D4D8;
     font-size: 11px;
-    font-family: monospace;
-    padding: 2px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 2px 6px;
     border-radius: 4px;
     margin-right: 8px;
+    border: 1px solid #3F3F46;
 }
-.aq-tag-new { background: #14532D; color: #4ADE80; padding: 2px 8px; border-radius: 4px; margin: 2px; display: inline-block; font-size: 11px; }
-.aq-tag-dropped { background: #450A0A; color: #FCA5A5; padding: 2px 8px; border-radius: 4px; margin: 2px; display: inline-block; font-size: 11px; text-decoration: line-through; }
-.aq-tag-current { background: #1E293B; color: #94A3B8; padding: 2px 8px; border-radius: 4px; margin: 2px; display: inline-block; font-size: 11px; }
+
+.aq-tag-new { background: rgba(16, 185, 129, 0.1); color: #10B981; padding: 2px 8px; border-radius: 4px; margin: 2px; display: inline-block; font-size: 11px; border: 1px solid rgba(16, 185, 129, 0.2); font-weight: 500; }
+.aq-tag-dropped { background: rgba(239, 68, 68, 0.1); color: #EF4444; padding: 2px 8px; border-radius: 4px; margin: 2px; display: inline-block; font-size: 11px; text-decoration: line-through; border: 1px solid rgba(239, 68, 68, 0.2); }
+.aq-tag-current { background: #27272A; color: #A1A1AA; padding: 2px 8px; border-radius: 4px; margin: 2px; display: inline-block; font-size: 11px; border: 1px solid #3F3F46; }
+
 .aq-ticker-meta {
-    background: #1A2035;
+    background: radial-gradient(circle at top left, #27272A 0%, #18181B 100%);
+    border: 1px solid #3F3F46;
     border-radius: 6px;
-    padding: 10px 14px;
+    padding: 12px 14px;
     margin-top: 10px;
     font-size: 13px;
+    color: #E4E4E7;
 }
+.aq-ticker-meta b { font-size: 16px; color: #FAFAFA; font-family: 'JetBrains Mono', monospace; }
+.aq-ticker-meta code { background: rgba(255,255,255,0.05); padding: 2px 4px; border-radius: 3px; color: #60A5FA; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -189,9 +212,9 @@ if selected:
                     title="Piotroski F-Score",
                     paper_bgcolor=CHART_PAPER,
                     plot_bgcolor=CHART_PLOT,
-                    font=dict(color=CHART_FONT, family="monospace", size=11),
-                    xaxis=dict(gridcolor=CHART_GRID),
-                    yaxis=dict(gridcolor=CHART_GRID, range=[0, 9]),
+                    font=dict(color=CHART_FONT, family="Inter, sans-serif", size=11),
+                    xaxis=dict(gridcolor=CHART_GRID, tickfont=dict(family="JetBrains Mono, monospace")),
+                    yaxis=dict(gridcolor=CHART_GRID, range=[0, 9], tickfont=dict(family="JetBrains Mono, monospace")),
                     margin=dict(l=8, r=8, t=32, b=8),
                     showlegend=False,
                 )
@@ -214,9 +237,9 @@ if selected:
                     title=f"Altman Z-Score (threshold={threshold})",
                     paper_bgcolor=CHART_PAPER,
                     plot_bgcolor=CHART_PLOT,
-                    font=dict(color=CHART_FONT, family="monospace", size=11),
-                    xaxis=dict(gridcolor=CHART_GRID),
-                    yaxis=dict(gridcolor=CHART_GRID),
+                    font=dict(color=CHART_FONT, family="Inter, sans-serif", size=11),
+                    xaxis=dict(gridcolor=CHART_GRID, tickfont=dict(family="JetBrains Mono, monospace")),
+                    yaxis=dict(gridcolor=CHART_GRID, tickfont=dict(family="JetBrains Mono, monospace")),
                     margin=dict(l=8, r=8, t=32, b=8),
                     showlegend=False,
                 )
@@ -246,9 +269,9 @@ if selected:
                     barmode="stack",
                     paper_bgcolor=CHART_PAPER,
                     plot_bgcolor=CHART_PLOT,
-                    font=dict(color=CHART_FONT, family="monospace", size=11),
-                    xaxis=dict(gridcolor=CHART_GRID),
-                    yaxis=dict(gridcolor=CHART_GRID),
+                    font=dict(color=CHART_FONT, family="Inter, sans-serif", size=11),
+                    xaxis=dict(gridcolor=CHART_GRID, tickfont=dict(family="JetBrains Mono, monospace")),
+                    yaxis=dict(gridcolor=CHART_GRID, tickfont=dict(family="JetBrains Mono, monospace")),
                     margin=dict(l=8, r=8, t=32, b=8),
                     showlegend=True,
                     legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
@@ -277,14 +300,14 @@ if selected:
                     <span style="color:{sev_color}; font-size:11px; font-weight:700;">
                       {escape(sev)}
                     </span>
-                    <span style="color:#475569; font-size:11px; float:right;">
+                    <span style="color:#A1A1AA; font-size:11px; float:right;" class="aq-number">
                       FY{flag['fiscal_year']}
                     </span>
                   </div>
-                  <div style="color:#E2E8F0; font-size:13px; font-weight:600; margin-bottom:4px;">
+                  <div style="color:#FAFAFA; font-size:13px; font-weight:600; margin-bottom:4px; letter-spacing:-0.01em;">
                     {escape(flag['title'])}
                   </div>
-                  <div style="color:#94A3B8; font-size:12px; line-height:1.5;">
+                  <div style="color:#A1A1AA; font-size:12px; line-height:1.6;">
                     {escape(flag['detail'])}
                   </div>
                 </div>
@@ -300,8 +323,8 @@ if selected:
                 """)
         else:
             st.markdown("""
-            <div class="aq-card" style="border-left: 4px solid #22C55E;">
-              <div style="color:#22C55E; font-size:14px; font-weight:600;">
+            <div class="aq-card" style="border-left: 4px solid #10B981; background: linear-gradient(180deg, rgba(16,185,129,0.05) 0%, #121214 100%);">
+              <div style="color:#10B981; font-size:14px; font-weight:600; letter-spacing:-0.01em;">
                 No red flags triggered for this ticker
               </div>
             </div>
@@ -333,9 +356,9 @@ if selected:
                     title="MDA Sentiment Score",
                     paper_bgcolor=CHART_PAPER,
                     plot_bgcolor=CHART_PLOT,
-                    font=dict(color=CHART_FONT, family="monospace", size=11),
-                    xaxis=dict(gridcolor=CHART_GRID),
-                    yaxis=dict(gridcolor=CHART_GRID, range=[1, 10]),
+                    font=dict(color=CHART_FONT, family="Inter, sans-serif", size=11),
+                    xaxis=dict(gridcolor=CHART_GRID, tickfont=dict(family="JetBrains Mono, monospace")),
+                    yaxis=dict(gridcolor=CHART_GRID, range=[1, 10], tickfont=dict(family="JetBrains Mono, monospace")),
                     margin=dict(l=8, r=8, t=32, b=8),
                     showlegend=False,
                 )
@@ -351,20 +374,20 @@ if selected:
                     delta_symbol = "↑" if delta > 0 else ("↓" if delta < 0 else "→")
                     delta_class = "up" if delta > 0 else ("down" if delta < 0 else "flat")
                     st.markdown(f"""
-                    <div class="aq-card" style="padding:10px 16px;">
-                      <span style="color:#64748B; font-size:11px;">Latest: FY{latest['fiscal_year']}</span>
-                      <span style="color:{trend_color}; float:right; font-weight:700;">
+                    <div class="aq-card" style="padding:12px 16px;">
+                      <span style="color:#71717A; font-size:11px; text-transform:uppercase; letter-spacing:0.05em;">Latest: FY{latest['fiscal_year']}</span>
+                      <span style="color:{trend_color}; float:right; font-weight:600; font-size:14px;" class="aq-number">
                         {delta_symbol} {abs(delta)}
                       </span>
                       <br>
-                      <span style="color:{trend_color}; font-size:12px;">{escape((trend or 'N/A').capitalize())}</span>
+                      <span style="color:{trend_color}; font-size:12px; font-weight:500;">{escape((trend or 'N/A').capitalize())}</span>
                     </div>
                     """, unsafe_allow_html=True)
 
                 # Macro concerns timeline
                 st.markdown("**Macro Concerns**")
                 for entry in reversed(nlp_data):
-                    tags_html = f"<b style='color:#475569;'>FY{entry['fiscal_year']}</b> "
+                    tags_html = f"<b style='color:#71717A; font-family: \"JetBrains Mono\", monospace;'>FY{entry['fiscal_year']}</b> "
                     concerns = entry.get("macro_concerns", [])
                     new_concerns = entry.get("new_macro_concerns", [])
                     dropped_concerns = entry.get("dropped_macro_concerns", [])
@@ -381,14 +404,14 @@ if selected:
                 # CapEx tone badge
                 capex_tone = latest.get("capex_guidance_tone")
                 capex_changed = latest.get("capex_tone_changed")
-                badge_color = SEV_HIGH if capex_changed else "#334155"
-                changed_indicator = "<span style='color:#FF8C00; font-size:11px; margin-left:8px;'>[TONE CHANGED]</span>" if capex_changed else ""
+                badge_color = SEV_HIGH if capex_changed else "#D4D4D8"
+                changed_indicator = "<span style='color:#F59E0B; font-size:11px; margin-left:8px;'>[TONE CHANGED]</span>" if capex_changed else ""
 
                 st.markdown(f"""
-                <div class="aq-card" style="padding:8px 14px;">
-                  <span style="color:#64748B; font-size:11px;">CapEx Guidance</span>
+                <div class="aq-card" style="padding:10px 14px;">
+                  <span style="color:#71717A; font-size:11px; text-transform:uppercase; letter-spacing:0.05em;">CapEx Guidance</span>
                   <br>
-                  <span style="color:{badge_color}; font-size:13px; font-weight:600;">
+                  <span style="color:{badge_color}; font-size:13px; font-weight:600; letter-spacing:-0.01em;">
                     {escape(capex_tone or 'N/A')}
                   </span>
                   {changed_indicator}
