@@ -144,6 +144,7 @@ def fetch_flags(symbol: str):
 with st.sidebar:
     st.markdown("## Alpha-Q")
     st.markdown("*Fundamental Quant Dashboard*")
+    st.markdown("[🔗 GitHub Repository](https://github.com/K1ndredzzz/Alpha-Q)")
     st.divider()
 
     all_meta = fetch_tickers()
