@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   alpha-q-backend:
     image: fuzhouxing/alpha-q-backend:latest
@@ -10,7 +8,7 @@ services:
     environment:
       - DATABASE_URL=/data/alpha_q_master.db
     volumes:
-      - ./data/alpha_q_master.db:/data/alpha_q_master.db:ro
+      - ./data:/data
     networks:
       - alpha_q_net
     healthcheck:
