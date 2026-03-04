@@ -176,7 +176,7 @@ if selected:
         nlp_data = fetch_nlp(selected)
         flags_data = fetch_flags(selected)
 
-    col_m1, col_m3, col_m2 = st.columns([2, 1.5, 1.5])
+    col_m1, col_m2, col_m3 = st.columns([2, 1.5, 1.5])
 
     # M1: Hard Numbers
     with col_m1:
@@ -247,37 +247,65 @@ if selected:
                 st.plotly_chart(fig_z, use_container_width=True)
 
                 # DuPont ROE decomposition
-                roes = [d.get("roe") for d in quant_data]
                 margins = [d.get("net_margin") for d in quant_data]
                 turnovers = [d.get("asset_turnover") for d in quant_data]
                 multipliers = [d.get("equity_multiplier") for d in quant_data]
 
                 fig_roe = go.Figure()
                 fig_roe.add_trace(go.Bar(
-                    y=years, x=margins, name="Net Margin",
-                    orientation="h", marker_color="#A78BFA"
+                    x=years, y=margins, name="Net Margin",
+                    marker_color="#F97316",
+                    showlegend=True
                 ))
                 fig_roe.add_trace(go.Bar(
-                    y=years, x=turnovers, name="Asset Turnover",
-                    orientation="h", marker_color=ACCENT_CYAN
+                    x=years, y=turnovers, name="Asset Turnover",
+                    marker_color="#14B8A6",
+                    showlegend=True
                 ))
-                fig_roe.add_trace(go.Bar(
-                    y=years, x=multipliers, name="Equity Multiplier",
-                    orientation="h", marker_color=ACCENT_BLUE
+                fig_roe.add_trace(go.Scatter(
+                    x=years, y=multipliers, name="Equity Multiplier",
+                    mode="lines+markers",
+                    line=dict(color="#E11D48", width=2),
+                    marker=dict(size=6, color="#E11D48"),
+                    yaxis="y2",
+                    showlegend=True
                 ))
                 fig_roe.update_layout(
-                    title="DuPont ROE Decomposition",
-                    barmode="stack",
+                    title=dict(
+                        text="DuPont ROE Drivers (Non-Stacked)",
+                        x=0,
+                        xanchor="left",
+                        y=0.96,
+                        yanchor="top",
+                    ),
+                    barmode="group",
                     paper_bgcolor=CHART_PAPER,
                     plot_bgcolor=CHART_PLOT,
                     font=dict(color=CHART_FONT, family="Inter, sans-serif", size=11),
                     xaxis=dict(gridcolor=CHART_GRID, tickfont=dict(family="JetBrains Mono, monospace")),
-                    yaxis=dict(gridcolor=CHART_GRID, tickfont=dict(family="JetBrains Mono, monospace")),
-                    margin=dict(l=8, r=8, t=32, b=8),
+                    yaxis=dict(
+                        title="Net Margin / Asset Turnover",
+                        gridcolor=CHART_GRID,
+                        tickfont=dict(family="JetBrains Mono, monospace"),
+                    ),
+                    yaxis2=dict(
+                        title="Equity Multiplier",
+                        overlaying="y",
+                        side="right",
+                        showgrid=False,
+                        tickfont=dict(family="JetBrains Mono, monospace"),
+                    ),
+                    margin=dict(l=8, r=8, t=96, b=72),
                     showlegend=True,
-                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+                    legend=dict(
+                        orientation="h",
+                        yanchor="top",
+                        y=-0.22,
+                        xanchor="left",
+                        x=0,
+                    ),
                 )
-                st.plotly_chart(fig_roe, use_container_width=True)
+                st.plotly_chart(fig_roe, use_container_width=True, config={"displayModeBar": False})
         else:
             st.info("No quant data available")
 
@@ -286,8 +314,15 @@ if selected:
         st.markdown("### M3: Red Flags")
 
         if flags_data:
-            severity_order = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2}
-            sorted_flags = sorted(flags_data, key=lambda f: (severity_order.get(f["severity"], 3), -f["fiscal_year"]))
+            severity_rank = {"CRITICAL": 3, "HIGH": 2, "MEDIUM": 1}
+            sorted_flags = sorted(
+                flags_data,
+                key=lambda f: (
+                    f.get("fiscal_year", 0),
+                    severity_rank.get((f.get("severity") or "").upper(), 0),
+                ),
+                reverse=True,
+            )
 
             for flag in sorted_flags:
                 sev = flag["severity"]

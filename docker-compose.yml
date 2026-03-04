@@ -4,7 +4,7 @@ services:
     container_name: alpha-q-backend
     restart: unless-stopped
     ports:
-      - "8041:8000"
+      - "9041:8000"
     environment:
       - DATABASE_URL=/data/alpha_q_master.db
     volumes:
@@ -23,7 +23,7 @@ services:
     container_name: alpha-q-frontend
     restart: unless-stopped
     ports:
-      - "8040:8501"
+      - "9040:8501"
     environment:
       - BACKEND_URL=http://alpha-q-backend:8000
     depends_on:

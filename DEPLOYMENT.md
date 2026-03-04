@@ -34,7 +34,7 @@
 
 ```bash
 cd scripts
-python 01_fetch_yfinance_and_calc.py
+python 01_mock_financials.py
 python 02_merge_to_master.py
 ```
 
